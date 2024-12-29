@@ -2,7 +2,7 @@
 
 Signalis is a simple JavaScript library that will help you connect or disconnect signals across your application.
 
-Signalis is lightweight and has really, really few lines of code.
+It's designed to be lightweight and to really, really contain few lines of code.
 
 > [!NOTE]
 > **_Project Status_**: Preparing to upload to npm
