@@ -4,7 +4,8 @@ Signalis is a simple JavaScript library that will help you connect or disconnect
 
 Signalis is lightweight and has really, really few lines of code.
 
-> [!NOTE] > **_Project Status_**: Preparing to upload to npm
+> ![NOTE]
+> **_Project Status_**: Preparing to upload to npm
 
 ## Usage example
 
