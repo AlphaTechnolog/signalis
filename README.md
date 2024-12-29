@@ -61,21 +61,20 @@ const { Signals } = require("signalis");
 
 const signals = new Signalis();
 
-const consumer =
-  /* ... */
+const consumer = /* ... */
 
-  await consumer.run({
-    eachMessage: ({ message }) => {
-      const { key, value } = message;
-      if (!key || !value) return;
-      const keystr = key.toString();
-      const product = productAvroSchema.fromBuffer(value);
-      signals.emit("notification:product", {
-        key: keystr,
-        product,
-      });
-    },
-  });
+await consumer.run({
+  eachMessage: ({ message }) => {
+    const { key, value } = message;
+    if (!key || !value) return;
+    const keystr = key.toString();
+    const product = productAvroSchema.fromBuffer(value);
+    signals.emit("notification:product", {
+      key: keystr,
+      product,
+    });
+  },
+});
 
 const router = Router();
 
