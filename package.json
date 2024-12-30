@@ -1,8 +1,8 @@
 {
   "name": "signalis",
   "description": "Lightweight implementation of declarative signals for javascript",
-  "version": "1.0.0",
-  "main": "./src/index.ts",
+  "version": "1.0.1",
+  "main": "./dist/index.js",
   "files": [
     "dist"
   ],
