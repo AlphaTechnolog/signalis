@@ -4,30 +4,28 @@ Signalis is a simple JavaScript library that will help you connect or disconnect
 
 It's designed to be lightweight and to really, really contain few lines of code.
 
-> [!NOTE]
-> **_Project Status_**: Preparing to upload to npm
-
 ## Usage example
 
-Create a new project and install signalis using npm
+This example uses bun for typescript setup convenience, but should be pretty much the same
+on standard nodejs typescript.
 
 ```sh
-mkdir -pv ./example
-cd example
-npm init -y
-npm install signalis
+mkdir -pv ./signalis-example && cd signalis-example
+bun init -y
+bun add signalis
 ```
 
-Then write a javascript file
+Then open up `index.ts`
 
-```javascript
-const { Signalis } = require("signalis");
+```typescript
+import { Signalis } from "signalis";
 
 const signals = new Signalis();
 
-signals.connect("examples:person", (person) => {
-  console.log({ person });
-});
+interface Person {
+  name: string;
+  surname: string;
+}
 
 setTimeout(() => {
   signals.emit("examples:person", {
@@ -36,45 +34,61 @@ setTimeout(() => {
   });
 }, 2500);
 
-// will wait by using js promises
-console.log({ personPromise: await signals.waitFor("examples:person") });
+signals.connect<Person>("person", ({ name, surname }) => {
+  console.log("Person from callback", {
+    name,
+    surname,
+  });
+});
+
+console.log("INFO: Waiting for person (promise)");
+const person = await signals.waitFor<Person>("person");
+console.log("Person from promise", { person });
 ```
 
-This will output:
+This will print:
 
-```json
-{
-  "name": "John",
-  "surname": "Doe"
+```
+INFO: Waiting for person (promise)
+Person {
+  name: "John",
+  surname: "Doe",
+}
+Person (from promise) {
+  person: {
+    name: "John",
+    surname: "Doe",
+  },
 }
 ```
 
-on your terminal.
+After 2500ms
 
 ## Real case usage
 
 I created this library because i was needing some really easy way to wait for some data that was being sent asynchronously through a kafkajs consumer while i was still handling some express request, and signalis helped me accomplish this goal easily, with a code which did look like this:
 
 ```js
-const { Router } = require("express");
-const { Signals } = require("signalis");
+import { Router } from "express";
+import { Signalis } from "signalis";
 
 const signals = new Signalis();
 
-const consumer = /* ... */
+const consumer =
+  /* ... */
 
-await consumer.run({
-  eachMessage: ({ message }) => {
-    const { key, value } = message;
-    if (!key || !value) return;
-    const keystr = key.toString();
-    const product = productAvroSchema.fromBuffer(value);
-    signals.emit("notification:product", {
-      key: keystr,
-      product,
-    });
-  },
-});
+  await consumer.run({
+    eachMessage: ({ message }) => {
+      const { key, value } = message;
+      if (!key || !value) return;
+      const keystr = key.toString();
+      const product = productAvroSchema.fromBuffer(value);
+      signals.emit("notification:product", {
+        key: keystr,
+        product,
+      });
+    },
+  });
 
 const router = Router();
 
@@ -92,8 +106,3 @@ router.get("/something", async (_req, res) => {
   });
 });
 ```
-
-## TODO
-
-- [ ] Upload to NPM
-- [ ] Submit typescript types to npm
